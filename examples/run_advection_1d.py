@@ -1,10 +1,12 @@
 # examples/run_advection_1d.py
-import numpy as np
-import matplotlib.pyplot as plt
-from pathlib import Path
-from datetime import datetime
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import numpy as np
 from src.advection1d import upwind_advection
+from src.viz import new_fig, save_fig
+import matplotlib.pyplot as plt
+
 
 # grid
 L = 1.0
@@ -26,22 +28,30 @@ steps = int(T / dt)
 
 u_final, hist = upwind_advection(u0, c, dx, dt, steps, periodic=True)
 
-# plot
-plt.figure(figsize=(8, 4))
-plt.plot(x, u0, label="t=0")
-labels = ["25%", "50%", "75%", "100%"]
-for snap, lab in zip(hist, labels):
-    plt.plot(x, snap, label=lab)
+# layman-friendly plot
+fig, ax = new_fig(
+    title="1D Advection (Upwind) - shape drifts right and diffuses",
+    xlabel="Position x",
+    ylabel="u(x)"
+)
 
-plt.title("1D Advection — Upwind scheme (CFL=%.2f)" % (c * dt / dx))
-plt.xlabel("x")
-plt.ylabel("u")
-plt.legend(loc="upper right")
-plt.tight_layout()
+# show start
+ax.plot(x, u0, linewidth=2, label="Start (t=0)")
+
+# show evenly spaced time slices
+labels = ["25% of total time", "50%", "75%", "100% (final)"]
+for snap, lab in zip(hist, labels):
+    ax.plot(x, snap, linewidth=1.5, label=lab)
+
+# annotatio
+ax.annotate(
+    f"CFL = {c*dt/dx:.2f}  (|c·Δt/Δx| ≤ 1 → stable)",
+    xy=(0.02, 0.95), xycoords='axes fraction',
+    va="top"
+)
+
+ax.legend(loc="upper right", frameon=True)
 
 # save
-outdir = Path("assets")
-outdir.mkdir(exist_ok=True)
-fname = outdir / f"advection1d_demo_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-plt.savefig(fname, dpi=160)
-print(f"Saved figure to {fname.resolve()}")
+fname = save_fig(fig, stem="advection1d_demo")
+print(f"Saved: {fname.resolve()}")
