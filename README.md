@@ -3,11 +3,11 @@ Lightweight math playground for shallow-water and advection-diffusion equations.
 
 
 ### To-do
-- [ ] Develop repo structure (src, examples)
-- [ ] Implement 1D advection solver
+- [x] Develop repo structure (src, examples)
+- [x] Implement 1D advection solver
+- [x] 1D Benchmarking + CFL stability demo
 - [ ] Build into 2D scalar transport
 - [ ] Shallow-water equations
-- [ ] Benchmarking + CFL stability demo
 - [ ] Write notes ("CFD-Notes")
 
 
